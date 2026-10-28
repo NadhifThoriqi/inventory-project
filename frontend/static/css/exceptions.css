@@ -1,0 +1,246 @@
+/* =============================================================
+   Stylesheet Halaman Error (400, 401, 403, 404, 500, dst) —
+   Portal Inventory Project. Dipakai oleh _base.html, yang diwarisi
+   semua halaman di html/exceptions/.
+   ============================================================= */
+
+:root {
+  --ink: #1C1A17;
+  --emerald: #0F4C3A;
+  --emerald-deep: #0A3428;
+  --emerald-soft: #16624B;
+  --gold-light: #E8C873;
+  --parchment: #F7F1E1;
+  --parchment-dark: #EFE6CE;
+  --terracotta: #A8442E;
+  --white: #FFFFFF;
+  --line: #E2D9C2;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--parchment);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+.error-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  overflow: hidden;
+}
+
+/* Pola Geometris Latar Belakang */
+.bg-pattern {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+/* Kartu Kontainer Utama */
+.error-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 520px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 44px 36px;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(15, 76, 58, 0.06);
+}
+
+/* Brandmark Mini */
+.brand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--parchment);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 4px 14px 4px 6px;
+  margin-bottom: 24px;
+}
+
+.brand-mark {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--emerald);
+  color: var(--gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-txt {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--emerald-deep);
+  letter-spacing: .02em;
+}
+
+/* Angka 404 Besar */
+.error-code-wrapper {
+  margin-bottom: 8px;
+}
+
+.error-number {
+  font-family: 'Reem Kufi', sans-serif;
+  font-size: 96px;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--emerald-deep);
+  letter-spacing: -2px;
+  display: inline-block;
+  background: linear-gradient(135deg, var(--emerald-deep), var(--emerald-soft));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Judul & Deskripsi */
+.error-title {
+  font-family: 'Reem Kufi', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.error-desc {
+  font-size: 14.5px;
+  color: #6b6355;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* Box Rute/Path yang Error */
+.error-path-box {
+  background: var(--parchment);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 8px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  margin-bottom: 28px;
+}
+
+.path-label {
+  font-size: 12px;
+  color: #8a8272;
+  font-weight: 500;
+}
+
+.path-code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--terracotta);
+  font-weight: 500;
+  word-break: break-all;
+}
+
+/* Tombol Aksi */
+.error-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all .15s ease;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: var(--emerald);
+  color: var(--parchment);
+  border: 1px solid var(--emerald);
+}
+
+.btn-primary:hover {
+  background: var(--emerald-deep);
+  border-color: var(--emerald-deep);
+}
+
+.btn-outline {
+  background: var(--white);
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+}
+
+.btn-outline:hover {
+  background: var(--parchment-dark);
+  border-color: #d1c5a9;
+}
+
+/* Ikon SVG */
+svg.icon {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Footer Quote */
+.error-footer {
+  border-top: 1px dashed var(--line);
+  padding-top: 16px;
+}
+
+.error-footer p {
+  font-size: 12px;
+  color: #8a8272;
+  font-style: italic;
+}
+
+/* Responsif Mobile */
+@media (max-width: 480px) {
+  .error-container {
+    padding: 36px 20px;
+  }
+
+  .error-number {
+    font-size: 80px;
+  }
+
+  .error-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

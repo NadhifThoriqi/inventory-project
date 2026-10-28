@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sqlmodel
+sqlalchemy[asyncio]
+pyjwt
+types-pyjwt
+bcrypt
+jinja2
+pydantic[email]
+asyncpg

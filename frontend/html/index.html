@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0f6b4f">
+    <title>Inventory</title>
+    <style>
+        :root {
+            --bg: #f5f7f6;
+            --card: #fff;
+            --ink: #14201b;
+            --mut: #5d6d65;
+            --line: #dde5e0;
+            --pri: #0f6b4f;
+            --on: #fff;
+            --bad: #b3261e;
+            --warn: #fdf0c9;
+            --warnt: #7a4f06;
+            --okb: #d6f3e3;
+            --okt: #115c37;
+            --badb: #fde2d9;
+            --badt: #9a2c15;
+            --r: 14px
+        }
+
+        @media(prefers-color-scheme:dark) {
+            :root {
+                --bg: #0f1512;
+                --card: #18211d;
+                --ink: #eaf1ed;
+                --mut: #9fb0a7;
+                --line: #2b3832;
+                --pri: #3dbb90;
+                --on: #06251a;
+                --bad: #ff8a80;
+                --warn: #3d3210;
+                --warnt: #f3d37a;
+                --okb: #14382a;
+                --okt: #8ee0b8;
+                --badb: #40201a;
+                --badt: #ffb4a2
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        body {
+            margin: 0;
+            font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            padding-bottom: calc(76px + env(safe-area-inset-bottom))
+        }
+
+        [hidden] {
+            display: none !important
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin: 0
+        }
+
+        h1 {
+            font-size: 26px
+        }
+
+        h2 {
+            font-size: 20px
+        }
+
+        .mut {
+            color: var(--mut);
+            font-size: 14px
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--pri);
+            outline-offset: 2px
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            * {
+                transition: none !important;
+                animation: none !important
+            }
+        }
+
+        input,
+        select,
+        textarea,
+        button {
+            font: inherit;
+            color: inherit
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 12px 0 4px
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            min-height: 46px;
+            padding: 10px 12px;
+            border: 1.5px solid var(--line);
+            border-radius: 12px;
+            background: var(--card)
+        }
+
+        input[type=checkbox] {
+            width: 20px;
+            min-height: 0;
+            height: 20px;
+            accent-color: var(--pri)
+        }
+
+        .btn {
+            min-height: 46px;
+            padding: 10px 18px;
+            border: 0;
+            border-radius: 12px;
+            background: var(--pri);
+            color: var(--on);
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .btn.o {
+            background: none;
+            border: 1.5px solid var(--line);
+            color: var(--ink)
+        }
+
+        .btn.r {
+            background: var(--bad);
+            color: #fff
+        }
+
+        .btn.s {
+            min-height: 40px;
+            padding: 6px 14px;
+            font-size: 14px
+        }
+
+        .btn.w {
+            width: 100%
+        }
+
+        .btn:disabled {
+            opacity: .55
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            padding: 16px
+        }
+
+        .skip {
+            position: absolute;
+            left: -999px
+        }
+
+        .skip:focus {
+            left: 8px;
+            top: 8px;
+            background: var(--card);
+            padding: 8px;
+            z-index: 20
+        }
+
+        #auth {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: max(24px, 6vh) 16px
+        }
+
+        .seg {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--line);
+            border-radius: 12px;
+            margin: 16px 0
+        }
+
+        .seg button {
+            flex: 1;
+            min-height: 42px;
+            border: 0;
+            border-radius: 9px;
+            background: none;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--mut)
+        }
+
+        .seg button[aria-selected=true] {
+            background: var(--card);
+            color: var(--ink)
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: var(--card);
+            border-bottom: 1px solid var(--line)
+        }
+
+        header b {
+            flex: 1;
+            font-size: 18px
+        }
+
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 5;
+            display: flex;
+            background: var(--card);
+            border-top: 1px solid var(--line);
+            padding-bottom: env(safe-area-inset-bottom)
+        }
+
+        nav button {
+            flex: 1;
+            min-height: 60px;
+            border: 0;
+            background: none;
+            color: var(--mut);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px
+        }
+
+        nav button span {
+            font-size: 22px;
+            line-height: 1
+        }
+
+        nav button[aria-current=page] {
+            color: var(--pri)
+        }
+
+        main {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 16px
+        }
+
+        .tools {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px
+        }
+
+        .tools input {
+            flex: 1
+        }
+
+        .chips {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px
+        }
+
+        .chip {
+            min-height: 40px;
+            padding: 6px 14px;
+            border: 1.5px solid var(--line);
+            border-radius: 99px;
+            background: none;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        .chip[aria-pressed=true] {
+            background: var(--pri);
+            color: var(--on);
+            border-color: var(--pri)
+        }
+
+        .list {
+            display: grid;
+            gap: 10px
+        }
+
+        .it {
+            display: grid;
+            gap: 8px
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: flex-start
+        }
+
+        .it b {
+            word-break: break-word
+        }
+
+        .num {
+            font-size: 22px;
+            font-weight: 800;
+            text-align: right;
+            line-height: 1.1
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--line)
+        }
+
+        .tag.low {
+            background: var(--warn);
+            color: var(--warnt)
+        }
+
+        .tag.in {
+            background: var(--okb);
+            color: var(--okt)
+        }
+
+        .tag.out {
+            background: var(--badb);
+            color: var(--badt)
+        }
+
+        .acts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .pg {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 14px;
+            margin-top: 16px
+        }
+
+        .empty {
+            text-align: center;
+            padding: 32px 8px;
+            color: var(--mut)
+        }
+
+        .fab {
+            position: fixed;
+            right: 16px;
+            bottom: calc(76px + env(safe-area-inset-bottom));
+            z-index: 6;
+            box-shadow: 0 6px 18px #0004;
+            border-radius: 99px;
+            padding-inline: 22px
+        }
+
+        dialog {
+            width: min(460px, calc(100% - 24px));
+            border: 0;
+            border-radius: 18px;
+            background: var(--card);
+            color: var(--ink);
+            padding: 20px;
+            max-height: 92dvh;
+            overflow: auto
+        }
+
+        dialog::backdrop {
+            background: #0008
+        }
+
+        .two {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        .two+.two,
+        .btns {
+            margin-top: 6px
+        }
+
+        .btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px
+        }
+
+        .btns>* {
+            flex: 1
+        }
+
+        #toast {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: calc(88px + env(safe-area-inset-bottom));
+            z-index: 30;
+            max-width: 92vw;
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: #14201b;
+            color: #fff;
+            font-weight: 600
+        }
+
+        #toast.e {
+            background: #b3261e
+        }
+
+        @media(min-width:800px) {
+            body {
+                padding: 0
+            }
+
+            nav {
+                position: static;
+                border: 0;
+                background: none;
+                gap: 4px;
+                padding: 0
+            }
+
+            nav button {
+                flex-direction: row;
+                min-height: 42px;
+                padding: 0 14px;
+                border-radius: 10px;
+                font-size: 15px;
+                flex: none
+            }
+
+            nav button span {
+                display: none
+            }
+
+            nav button[aria-current=page] {
+                background: var(--pri);
+                color: var(--on)
+            }
+
+            header {
+                gap: 20px
+            }
+
+            .fab {
+                bottom: 24px
+            }
+
+            #toast {
+                bottom: 24px
+            }
+
+            .list {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="skip" href="#main">Lewati ke konten</a>
+
+    <section id="auth" hidden>
+        <h1>📦 Inventory</h1>
+        <p class="mut">Catat stok barang dengan mudah.</p>
+        <div class="seg" role="tablist"><button role="tab" aria-selected="true" data-t="in">Masuk</button><button
+                role="tab" aria-selected="false" data-t="up">Daftar</button></div>
+        <form id="f-in" class="card">
+            <label for="i-e">Email</label><input id="i-e" name="email" type="email" required autocomplete="email"
+                inputmode="email">
+            <label for="i-p">Password</label><input id="i-p" name="password" type="password" required
+                autocomplete="current-password">
+            <label style="display:flex;gap:10px;align-items:center;font-weight:500"><input type="checkbox"
+                    name="remember">Ingat saya 30 hari</label>
+            <p style="margin-top:16px"><button class="btn w">Masuk</button></p>
+        </form>
+        <form id="f-up" class="card" hidden>
+            <label for="u-n">Nama</label><input id="u-n" name="name" required autocomplete="name">
+            <label for="u-e">Email</label><input id="u-e" name="email" type="email" required autocomplete="email"
+                inputmode="email">
+            <label for="u-p">Password</label><input id="u-p" name="password" type="password" required
+                autocomplete="new-password" aria-describedby="u-h">
+            <p class="mut" id="u-h" style="margin-top:6px">Min. 8 karakter: huruf besar, kecil, angka, dan simbol. Akun
+                baru perlu disetujui admin.</p>
+            <p style="margin-top:16px"><button class="btn w">Daftar</button></p>
+        </form>
+    </section>
+
+    <div id="app" hidden>
+        <header><b>📦 Inventory</b>
+            <nav id="nav" aria-label="Menu utama"></nav><span class="mut" id="who"></span><button class="btn o s"
+                id="out">Keluar</button>
+        </header>
+        <main id="main" tabindex="-1">
+            <section id="v-items">
+                <div class="tools"><input id="q" type="search" placeholder="Cari nama atau SKU"
+                        aria-label="Cari barang"></div>
+                <div class="chips"><button class="chip" id="low" aria-pressed="false">⚠ Menipis <span
+                            id="low-n"></span></button></div>
+                <div class="list" id="l-items"></div>
+                <div class="pg"><button class="btn o s" id="prev" aria-label="Halaman sebelumnya">‹
+                        Sebelumnya</button><span class="mut" id="pn"></span><button class="btn o s" id="next"
+                        aria-label="Halaman berikutnya">Berikutnya ›</button></div>
+                <button class="btn fab adm" id="add">+ Barang</button>
+            </section>
+            <section id="v-trx" hidden>
+                <h2 style="margin-bottom:12px">Riwayat transaksi</h2>
+                <div class="list" id="l-trx"></div>
+                <button class="btn fab" id="add-trx">+ Transaksi</button>
+            </section>
+            <section id="v-adm" hidden>
+                <h2 style="margin-bottom:4px">Menunggu persetujuan</h2>
+                <p class="mut" id="adm-empty" style="margin-bottom:12px"></p>
+                <div class="list" id="l-adm"></div>
+            </section>
+            <section id="v-me" hidden>
+                <div class="card">
+                    <h2>Profil</h2>
+                    <p class="mut" id="me-info"></p>
+                    <form id="f-me"><label for="m-n">Nama baru</label><input id="m-n" name="name"
+                            placeholder="Kosongkan jika tidak diubah" autocomplete="name">
+                        <label for="m-e">Email baru</label><input id="m-e" name="email" type="email"
+                            placeholder="Kosongkan jika tidak diubah" autocomplete="email">
+                        <p style="margin-top:16px"><button class="btn w">Simpan</button></p>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <dialog id="d-item" aria-labelledby="d-it">
+        <form id="f-item">
+            <h2 id="d-it"></h2>
+            <label for="a-s">SKU</label><input id="a-s" name="sku" required>
+            <label for="a-n">Nama</label><input id="a-n" name="name" required>
+            <div class="two">
+                <div><label for="a-st">Stok awal</label><input id="a-st" name="stock" type="number" inputmode="numeric"
+                        min="0" value="0"></div>
+                <div><label for="a-m">Stok minimum</label><input id="a-m" name="min_stock" type="number"
+                        inputmode="numeric" min="0" value="0"></div>
+            </div>
+            <label for="a-d">Deskripsi</label><textarea id="a-d" name="description" rows="2"></textarea>
+            <div class="btns"><button type="button" class="btn o" data-x>Batal</button><button
+                    class="btn">Simpan</button></div>
+        </form>
+    </dialog>
+
+    <dialog id="d-trx" aria-labelledby="d-tt">
+        <form id="f-trx">
+            <h2 id="d-tt">Catat transaksi</h2><label for="t-i">Barang</label><select id="t-i" name="item_id"
+                required></select>
+            <div class="two">
+                <div><label for="t-t">Jenis</label><select id="t-t" name="type">
+                        <option value="in">Masuk</option>
+                        <option value="out">Keluar</option>
+                    </select></div>
+                <div><label for="t-q">Jumlah</label><input id="t-q" name="quantity" type="number" inputmode="numeric"
+                        min="1" value="1" required></div>
+            </div>
+            <label for="t-c">Catatan</label><input id="t-c" name="notes">
+            <div class="btns"><button type="button" class="btn o" data-x>Batal</button><button
+                    class="btn">Simpan</button></div>
+        </form>
+    </dialog>
+
+    <div id="toast" role="status" aria-live="polite" hidden></div>
+
+    <script>
+        const API = location.pathname.startsWith('/thorix') ? '/thorix/thorix-api/v1' : '/thorix-api/v1';
+        const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+        const S = { user: null, page: 1, limit: 10, q: '', low: false, rows: [], names: {} };
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const admin = () => S.user?.role === 'admin';
+
+        function toast(m, err) { const t = $('#toast'); t.textContent = m; t.className = err ? 'e' : ''; t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 3500); }
+        function errText(d, fb) {
+            const l = Array.isArray(d?.errors) ? d.errors : Array.isArray(d?.detail) ? d.detail : null;
+            if (l) return l.map(e => String(e.msg).replace(/^Value error, /, '')).join('; ');
+            return typeof d?.detail === 'string' ? d.detail : fb;
+        }
+        async function api(method, path, body) {
+            let r;
+            try { r = await fetch(API + path, { method, credentials: 'include', headers: { Accept: 'application/json', ...(body ? { 'Content-Type': 'application/json' } : {}) }, body: body ? JSON.stringify(body) : undefined }); }
+            catch { throw new Error('Tidak bisa terhubung ke server.'); }
+            const d = await r.json().catch(() => null);
+            if (!r.ok) { if (r.status === 401 && S.user && path !== '/auth/sign-out') { S.user = null; showAuth(); } throw new Error(errText(d, `Terjadi kesalahan (${r.status}).`)); }
+            return d;
+        }
+        function form(sel, fn) { $(sel).addEventListener('submit', async e => { e.preventDefault(); const f = e.target, bs = f.querySelectorAll('button'); bs.forEach(b => b.disabled = true); try { await fn(Object.fromEntries(new FormData(f)), f); } catch (x) { toast(x.message, true); } bs.forEach(b => b.disabled = false); }); }
+        $$('dialog [data-x]').forEach(b => b.onclick = () => b.closest('dialog').close());
+
+        /* tampilan */
+        function showAuth() { $('#app').hidden = true; $('#auth').hidden = false; }
+        function showApp() {
+            $('#auth').hidden = true; $('#app').hidden = false; $('#who').textContent = S.user.name;
+            const tabs = [['items', '📦', 'Barang'], ['trx', '🔁', 'Transaksi'], ...(admin() ? [['adm', '✅', 'Persetujuan']] : []), ['me', '👤', 'Profil']];
+            $('#nav').innerHTML = tabs.map(([k, i, n]) => `<button data-v="${k}"><span aria-hidden="true">${i}</span>${n}</button>`).join('');
+            $$('.adm').forEach(e => e.hidden = !admin());
+            go(location.hash.slice(1) || 'items');
+        }
+        function go(v) {
+            if (!$('#v-' + v) || (v === 'adm' && !admin())) v = 'items';
+            $$('main>section').forEach(s => s.hidden = s.id !== 'v-' + v);
+            $$('#nav button').forEach(b => b.toggleAttribute('aria-current', b.dataset.v === v) || b.removeAttribute('aria-current'));
+            $$('#nav button').forEach(b => b.dataset.v === v ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+            history.replaceState(null, '', '#' + v); scrollTo(0, 0);
+            ({ items: loadItems, trx: loadTrx, adm: loadAdm, me: loadMe })[v]();
+        }
+        $('#nav').onclick = e => { const b = e.target.closest('button'); b && go(b.dataset.v); };
+
+        /* auth */
+        $$('.seg button').forEach(b => b.onclick = () => { $$('.seg button').forEach(x => x.setAttribute('aria-selected', x === b)); $('#f-in').hidden = b.dataset.t !== 'in'; $('#f-up').hidden = b.dataset.t !== 'up'; });
+        form('#f-in', async d => { await api('POST', '/auth/sign-in', { email: d.email, password: d.password, remember: !!d.remember }); await boot(); });
+        form('#f-up', async (d, f) => { await api('POST', '/auth/sign-up', d); f.reset(); toast('Berhasil daftar. Tunggu persetujuan admin.'); $('.seg button').click(); });
+        $('#out').onclick = async () => { try { await api('DELETE', '/auth/sign-out'); S.user = null; showAuth(); } catch (e) { toast(e.message, true); } };
+
+        /* barang */
+        async function loadItems() {
+            try {
+                const p = `?limit=${S.limit}&page=${S.page}`;
+                const rows = S.low ? await api('GET', '/items/low-stock' + p) : S.q ? await api('POST', '/items/search/', { search: S.q }) : await api('GET', '/items/' + p);
+                S.rows = rows; rows.forEach(r => S.names[r.id] = r.name);
+                $('#l-items').innerHTML = rows.map(r => `<article class="card it"><div class="top"><div><b>${esc(r.name)}</b><div class="mut">${esc(r.sku)}${r.description ? ' · ' + esc(r.description) : ''}</div></div>
+      <div><div class="num">${r.stock}</div>${r.stock <= r.min_stock ? '<span class="tag low">Menipis</span>' : `<span class="mut">min ${r.min_stock}</span>`}</div></div>
+      <div class="acts"><button class="btn s" data-t="${r.id}">Catat stok</button>${admin() ? `<button class="btn o s" data-e="${r.id}">Ubah</button><button class="btn o s" data-d="${r.id}" style="color:var(--bad)">Hapus</button>` : ''}</div></article>`).join('')
+                    || `<p class="empty">${S.low ? 'Tidak ada barang yang menipis 🎉' : 'Belum ada barang.'}</p>`;
+                $('.pg').hidden = !!S.q && !S.low; $('#pn').textContent = 'Hal. ' + S.page;
+                $('#prev').disabled = S.page <= 1; $('#next').disabled = rows.length < S.limit; loadLow();
+            } catch (e) { toast(e.message, true); }
+        }
+        async function loadLow() { try { const r = await api('GET', '/items/low-stock?limit=100&page=1'); $('#low-n').textContent = r.length ? `(${r.length}${r.length === 100 ? '+' : ''})` : ''; } catch { } }
+        let qt; $('#q').oninput = e => { clearTimeout(qt); qt = setTimeout(() => { S.q = e.target.value.trim(); S.low = false; $('#low').setAttribute('aria-pressed', false); S.page = 1; loadItems(); }, 350); };
+        $('#low').onclick = () => { S.low = !S.low; S.q = ''; $('#q').value = ''; $('#low').setAttribute('aria-pressed', S.low); S.page = 1; loadItems(); };
+        $('#prev').onclick = () => { S.page--; loadItems(); }; $('#next').onclick = () => { S.page++; loadItems(); };
+        let editId = null;
+        $('#add').onclick = () => { editId = null; $('#f-item').reset(); $('#d-it').textContent = 'Tambah barang'; $('#a-st').disabled = false; $('#d-item').showModal(); };
+        $('#l-items').onclick = async e => {
+            const b = e.target.closest('button'); if (!b) return;
+            const id = b.dataset.t || b.dataset.e || b.dataset.d, r = S.rows.find(x => x.id == id);
+            if (b.dataset.t) openTrx(r.id);
+            if (b.dataset.e) { editId = r.id; const f = $('#f-item');['sku', 'name', 'stock', 'min_stock', 'description'].forEach(k => f.elements[k].value = r[k] ?? ''); $('#a-st').disabled = true; $('#d-it').textContent = 'Ubah barang'; $('#d-item').showModal(); }
+            if (b.dataset.d && confirm(`Hapus "${r.name}"?`)) { try { await api('DELETE', '/items/delete/' + r.id); toast('Barang dihapus.'); loadItems(); } catch (x) { toast(x.message, true); } }
+        };
+        form('#f-item', async d => {
+            const b = { sku: d.sku, name: d.name, min_stock: +d.min_stock, description: d.description || null };
+            editId ? await api('PUT', '/items/update/' + editId, b) : await api('POST', '/items/', { ...b, stock: +d.stock });
+            $('#d-item').close(); toast('Tersimpan.'); loadItems();
+        });
+        async function openTrx(id) {
+            try {
+                const items = await api('GET', '/items/?limit=100&page=1');
+                if (!items.length) return toast('Belum ada barang. Tambahkan barang dulu.', true);
+                items.forEach(i => S.names[i.id] = i.name);
+                $('#t-i').innerHTML = items.map(i => `<option value="${i.id}">${esc(i.name)} (stok ${i.stock})</option>`).join('');
+                $('#f-trx').reset(); if (id) $('#t-i').value = id;
+                $('#d-trx').showModal();
+            } catch (e) { toast(e.message, true); }
+        }
+        $('#add-trx').onclick = () => openTrx();
+        form('#f-trx', async d => {
+            await api('POST', '/transactions/', { item_id: +d.item_id, type: d.type, quantity: +d.quantity, notes: d.notes || null });
+            $('#d-trx').close(); toast('Transaksi tersimpan.'); go(location.hash.slice(1) || 'items');
+        });
+
+        /* transaksi */
+        async function loadTrx() {
+            try {
+                const t = await api('GET', '/transactions/');
+                const need = [...new Set(t.map(x => x.item_id))].filter(i => !S.names[i]);
+                if (need.length) (await api('GET', '/items/?limit=100&page=1')).forEach(i => S.names[i.id] = i.name);
+                const when = s => new Date(s + (/Z|[+-]\d\d:?\d\d$/.test(s) ? '' : 'Z')).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+                $('#l-trx').innerHTML = [...t].reverse().map(x => `<article class="card top"><div><b>${esc(S.names[x.item_id] ?? '#' + x.item_id)}</b><div class="mut">${when(x.timestamp)}${x.notes ? ' · ' + esc(x.notes) : ''}</div></div>
+      <div style="text-align:right"><span class="tag ${x.type}">${x.type === 'in' ? 'Masuk' : 'Keluar'}</span><div class="num">${x.type === 'in' ? '+' : '−'}${x.quantity}</div></div></article>`).join('') || '<p class="empty">Belum ada transaksi.</p>';
+            } catch (e) { toast(e.message, true); }
+        }
+
+        /* admin */
+        async function loadAdm() {
+            try {
+                const r = await api('POST', '/auth/show-not-verified');
+                $('#adm-empty').textContent = r.length ? '' : 'Tidak ada pendaftar yang menunggu.';
+                $('#l-adm').innerHTML = r.map(u => `<article class="card top" style="align-items:center"><div><b>${esc(u.name)}</b><div class="mut">${esc(u.email)}</div></div><button class="btn s" data-v="${esc(u.email)}">Setujui</button></article>`).join('');
+            } catch (e) { toast(e.message, true); }
+        }
+        $('#l-adm').onclick = async e => { const b = e.target.closest('button'); if (!b) return; try { await api('POST', '/auth/verify-email', { email: b.dataset.v, is_verified: true }); toast('Akun disetujui.'); loadAdm(); } catch (x) { toast(x.message, true); } };
+
+        /* profil */
+        function loadMe() { $('#me-info').textContent = `${S.user.name} · ${S.user.email} · ${S.user.role}`; }
+        form('#f-me', async (d, f) => {
+            const b = Object.fromEntries(Object.entries(d).filter(([, v]) => v.trim()));
+            if (!Object.keys(b).length) return toast('Isi nama atau email baru.', true);
+            await api('PATCH', '/auth/edit-profile', b); S.user = await api('GET', '/auth/me'); f.reset(); $('#who').textContent = S.user.name; loadMe(); toast('Profil diperbarui.');
+        });
+
+        async function boot() { try { S.user = await api('GET', '/auth/me'); showApp(); } catch { showAuth(); } }
+        boot();
+    </script>
+</body>
+
+</html>
