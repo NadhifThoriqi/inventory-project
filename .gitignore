@@ -3,3 +3,7 @@ debug_errors.py
 venv
 **/__pycache__/
 .vscode
+
+*.zip
+STATUS-PROGRES.md
+docstring_panduan.md
